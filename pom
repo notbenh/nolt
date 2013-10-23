@@ -1,0 +1,51 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+my $f = $ENV{POM_FILE} ||  '/home/benh/.pom.pid';
+my $s = "$f.state";
+sub USEAGE() { 'USEAGE: pom [on|state|off]' }
+die USEAGE unless @ARGV == 1;
+
+sub MSG($$$){ 
+  my ($msg,$color,$sec) = @_;
+  die unless $msg;
+  system qq{ echo '$msg'  | dzen2 -bg $color -p $sec -h 100 -y 200}; 
+}
+sub ERROR($){ MSG shift, darkred => 3 }
+sub ERR($)  { MSG shift, darkred => 1; exit }
+sub NOTE($) { MSG shift, blue    => 2 }
+sub WORKING { ERROR 'get to work'; system qq{echo 'work' > $s} }
+sub BREAK   { NOTE 'take a break'; system qq{echo 'break'> $s} }
+
+my $action = shift;
+if($action eq 'off'){
+  ERR 'pom not running' unless -e $f;
+  system qq{kill `cat $f`};
+  unlink $f, $s;
+  ERR 'pom off';
+}
+elsif($action eq 'on'){
+  ERR 'pom already running or previous unclean exit' if -e $f;
+  my $pid = fork();
+  if($pid) {
+    warn "STARTING $pid";
+    `echo "$pid" > $f`;
+  }
+  elsif($pid == 0){
+    while(1){
+      WORKING; sleep(25*60);
+      BREAK  ; sleep(5*60);
+    }
+  }
+  else{
+    die USEAGE unless @ARGV == 1;
+  }
+}
+elsif($action eq 'state'){
+  my $state = `cat $s`;
+  chomp $state;
+  MSG $state, ($state =~ m{work}) ? 'darkred' : 'blue', 1;
+}
+else{
+  die USEAGE unless @ARGV == 1;
+}

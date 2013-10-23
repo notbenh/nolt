@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+my $file = $ENV{STAMPLOG_FILE} || '~/.stamplog';
+
+
+if(@ARGV){
+  local $_= qx{date +'%Y.%m.%d %T'};
+  chomp;
+  $_ = sprintf q{[%s] %s}, $_, join ' ', @ARGV;
+  s/'/\\'/g;
+  print qx{echo '$_' >> $file && echo 'noted' };
+}
+else{
+  exec qq{cat $file};
+}

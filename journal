@@ -1,0 +1,10 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+# TODO: this should create the dir if it's not there yet
+
+exec sprintf q{%s %s/%s}
+           , $ENV{EDITOR} || 'vim'
+           , $ENV{JOURNAL_FOLDER} || '~/.journal'
+           , `date +'%Y%m%d.journal.txt'`
