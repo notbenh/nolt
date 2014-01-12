@@ -1,0 +1,6 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+my $f = shift;
+my $c = "#!/bin/sh\n".join ' ', @ARGV;
+print qx{echo "$c" > $f ; echo 'wrote $f'};

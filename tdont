@@ -1,0 +1,2 @@
+#!/bin/sh
+TDONE_FILE=~/.dont_doit tdone

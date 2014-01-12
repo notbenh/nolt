@@ -1,0 +1,2 @@
+#!/bin/sh
+$EDITOR $SPARK_FILE

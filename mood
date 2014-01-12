@@ -1,0 +1,2 @@
+#!/bin/sh
+STAMPLOG_FILE=~/.mood stamplog
